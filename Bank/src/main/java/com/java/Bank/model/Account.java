@@ -5,21 +5,24 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Data
-@Document(collation = "accounts")
+@Document(collection = "accounts")
 public class Account {
     @Id
     private String accountNum;
     private AccountType accountType;
     private double balance;
+    private LocalDateTime accountopened;
 
     public Account(){
 
     }
 
-    public Account(String accountNum, AccountType accountType, double balance) {
-        this.accountNum = accountNum;
+    public Account(AccountType accountType, double balance, LocalDateTime accountopened) {
         this.accountType = accountType;
         this.balance = balance;
+        this.accountopened = accountopened;
     }
 }

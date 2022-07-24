@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Stack;
 
 @Data
-@Document(collation = "users")
+@Document(collection = "users")
 public class User {
     @Id
     private String userId;
@@ -30,8 +30,7 @@ public class User {
 
     public User(){}
 
-    public User(String userId, String firstName, String lastName, String address, String email, String phoneNum, String password, List<Account> account, Stack<Transaction> transaction) {
-        this.userId = userId;
+    public User(String firstName, String lastName, String address, String email, String phoneNum, String password, List<Account> account, Stack<Transaction> transaction) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

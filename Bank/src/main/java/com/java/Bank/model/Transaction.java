@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Data
-@Document(collation = "transactions")
+@Document(collection = "transactions")
 public class Transaction {
     @Id
     private String transactionId;
@@ -19,7 +19,8 @@ public class Transaction {
     public Transaction(){
 
     }
-    public Transaction(TransactionType transactionType,String description,LocalDateTime transactionDate) {
+
+    public Transaction(TransactionType transactionType, String description, LocalDateTime transactionDate) {
         this.transactionType = transactionType;
         this.description = description;
         this.transactionDate = transactionDate;

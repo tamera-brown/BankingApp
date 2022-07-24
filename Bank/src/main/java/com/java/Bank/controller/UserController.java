@@ -20,7 +20,7 @@ public class UserController {
     @Autowired
     UserService service;
 
-
+//Check
     @PostMapping("/AddUser")
     public ResponseEntity addUser(@RequestBody User newUser) {
         try {
@@ -29,6 +29,8 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    //Check
     @GetMapping()
     public ResponseEntity getAllUsers(){
         logger.info("Getting all Users.");return ResponseEntity.ok(service.getAllUsers());
@@ -41,7 +43,7 @@ public class UserController {
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity getUserByEmail(@PathVariable String email){
         try{
             return ResponseEntity.ok(service.getUserByEmail(email));

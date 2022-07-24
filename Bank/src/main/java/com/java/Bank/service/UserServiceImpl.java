@@ -43,16 +43,16 @@ public class UserServiceImpl implements UserService{
     @Override
     public User addUser(User newUser) throws UniqueUserEmailException, NullUserObjectException {
         if(newUser==null){
-            throw new NullUserObjectException("User cannont be null");
+            throw new NullUserObjectException("User cann ont be null");
         }
 
-        User retrieved=null;
         Optional<User> user = userRepo.findUserByEmail(newUser.getEmail());
         if(user.isEmpty()){
             List<Account> allAccounts=new ArrayList<>();
             Stack<Transaction> allTransactions=new Stack<>();
             newAccount.setAccountType(newUser.getAccount().get(0).getAccountType());
             newAccount.setBalance(newUser.getAccount().get(0).getBalance());
+            newAccount.setAccountopened(LocalDateTime.now());
             allAccounts.add(newAccount);
             newUser.setAccount(allAccounts);
             newTransaction.setTransactionType(TransactionType.DEPOSIT);
@@ -60,10 +60,10 @@ public class UserServiceImpl implements UserService{
             newTransaction.setTransactionDate(LocalDateTime.now());
             allTransactions.push(newTransaction);
             newUser.setTransaction(allTransactions);
-            newUser.setPassword(hashPassword(newUser.getPassword()));
-            userRepo.insert(newUser);
+            newUser.setPassword(hashPassword(newUser.getPassword()));;
             accountRepo.insert(allAccounts);
             transactionRepo.insert(allTransactions);
+            userRepo.insert(newUser);
 
         }
         else if(user.isPresent()) {
