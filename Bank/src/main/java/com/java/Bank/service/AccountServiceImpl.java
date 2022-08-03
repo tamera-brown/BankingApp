@@ -16,11 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
+
 
     @Autowired
     AccountRepo accountRepo;
@@ -32,13 +34,15 @@ public class AccountServiceImpl implements AccountService {
     TransactionRepo transactionRepo;
 
     @Override
-    public Account addAccount(Account newAccount, String userId) throws MissingPropertyException {
+    public Account addAccount(Account account, String userId) throws MissingPropertyException {
             Optional<User> user = userRepo.findById(userId);
         Transaction newTransaction = new Transaction();
             if (user.isPresent()){
-                newAccount.setAccountopened(LocalDateTime.now());
-                user.get().getAccount().add(newAccount);
-                accountRepo.insert(newAccount);
+                account.setAccountType(account.getAccountType());
+                account.setBalance(account.getBalance());
+                account.setAccountopened(LocalDateTime.now());
+                user.get().getAccount().add(account);
+                accountRepo.insert(account);
                 userRepo.save(user.get());
                 newTransaction.setTransactionType(TransactionType.DEPOSIT);
                 newTransaction.setDescription("initial deposit of $" + String.format("%.2f",user.get().getAccount().get(user.get().getAccount().size()-1).getBalance()));
@@ -49,7 +53,7 @@ public class AccountServiceImpl implements AccountService {
             } else
                 throw new MissingPropertyException("user does not exist");
 
-            return newAccount;
+            return account;
     }
 
     @Override
