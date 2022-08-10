@@ -3,8 +3,12 @@ package com.java.Bank.service;
 import com.java.Bank.exceptions.InvalidTransactionIdException;
 import com.java.Bank.exceptions.InvalidTransactionTypeException;
 import com.java.Bank.exceptions.InvalidUserIdException;
+import com.java.Bank.exceptions.MissingPropertyException;
 import com.java.Bank.model.Transaction;
+import com.java.Bank.requests.DepositRequest;
+import com.java.Bank.requests.WithdrawRequest;
 
+import java.awt.datatransfer.MimeTypeParseException;
 import java.util.List;
 
 public interface TransactionService {
@@ -14,9 +18,9 @@ public interface TransactionService {
 
     List<Transaction> getTransactionByType(String type) throws InvalidTransactionTypeException;
 
-    Transaction deposit(Double depositAmount) throws InvalidUserIdException;
+    Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException;
 
     List<Transaction> getTransactionsByUserId(String userId) throws InvalidUserIdException;
 
-    Transaction withdraw(Double withdrawAmount) throws InvalidUserIdException;
+    Transaction withdraw(WithdrawRequest withdrawRequest) throws MissingPropertyException;
 }

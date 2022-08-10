@@ -3,6 +3,9 @@ package com.java.Bank.controller;
 import com.java.Bank.exceptions.InvalidTransactionIdException;
 import com.java.Bank.exceptions.InvalidTransactionTypeException;
 import com.java.Bank.exceptions.InvalidUserIdException;
+import com.java.Bank.exceptions.MissingPropertyException;
+import com.java.Bank.requests.DepositRequest;
+import com.java.Bank.requests.WithdrawRequest;
 import com.java.Bank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,18 +48,18 @@ public class TransactionController {
         }
     }
     @PostMapping("/deposit")
-    public ResponseEntity deposit(@RequestBody Double depositAmount) {
+    public ResponseEntity deposit(@RequestBody DepositRequest depositRequest) {
         try {
-            return ResponseEntity.ok(service.deposit(depositAmount));
-        } catch (InvalidUserIdException e) {
+            return ResponseEntity.ok(service.deposit(depositRequest));
+        } catch (MissingPropertyException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
     @PostMapping("/withdraw")
-    public ResponseEntity withdraw(@RequestBody Double withdrawAmount) {
+    public ResponseEntity withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         try {
-            return ResponseEntity.ok(service.withdraw(withdrawAmount));
-        } catch (InvalidUserIdException e) {
+            return ResponseEntity.ok(service.withdraw(withdrawRequest));
+        } catch (MissingPropertyException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

@@ -1,22 +1,32 @@
 package com.java.Bank.service;
 
+import com.java.Bank.TransactionType;
 import com.java.Bank.exceptions.InvalidTransactionIdException;
 import com.java.Bank.exceptions.InvalidTransactionTypeException;
 import com.java.Bank.exceptions.InvalidUserIdException;
+import com.java.Bank.exceptions.MissingPropertyException;
+import com.java.Bank.model.Account;
 import com.java.Bank.model.Transaction;
 import com.java.Bank.model.User;
+import com.java.Bank.repo.AccountRepo;
 import com.java.Bank.repo.TransactionRepo;
 import com.java.Bank.repo.UserRepo;
+import com.java.Bank.requests.DepositRequest;
+import com.java.Bank.requests.WithdrawRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 @Service
 public class TransactionServiceImpI implements TransactionService {
     @Autowired
     TransactionRepo transactionRepo;
+    @Autowired
+    AccountRepo accountRepo;
     @Autowired
     UserRepo userRepo;
 
@@ -49,9 +59,30 @@ public class TransactionServiceImpI implements TransactionService {
     }
 
     @Override
-    public Transaction deposit(Double depositAmount) throws InvalidUserIdException {
-        return null;
-    }
+    public Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException {
+        Transaction transaction=new Transaction();
+
+        Optional<User> user = userRepo.findById(depositRequest.getUserId());
+
+        Optional<Account> account = accountRepo.findById(depositRequest.getAccountNum());
+
+
+        if (user.isPresent()){
+
+            account.get().setBalance(account.get().getBalance()+depositRequest.getDepositAmount());
+            accountRepo.save(account.get());
+            transaction.setTransactionType(TransactionType.DEPOSIT);
+            transaction.setDescription("deposit of $" + String.format("%.2f",depositRequest.getDepositAmount()));
+            transaction.setTransactionDate(LocalDateTime.now());
+            transactionRepo.insert(transaction);
+            user.get().getTransaction().push(transaction);
+            userRepo.save(user.get());
+        } else
+            throw new MissingPropertyException("user does not exist");
+
+        return transaction;
+        }
+
 
     @Override
     public List<Transaction> getTransactionsByUserId(String userId) throws InvalidUserIdException {
@@ -66,9 +97,26 @@ public class TransactionServiceImpI implements TransactionService {
         }
     }
 
-
     @Override
-    public Transaction withdraw(Double withdrawAmount) throws InvalidUserIdException {
-        return null;
+    public Transaction withdraw(WithdrawRequest withdrawRequest) throws MissingPropertyException {
+        Transaction transaction=new Transaction();
+
+        Optional<User> user = userRepo.findById(withdrawRequest.getUserId());
+
+        Optional<Account> account = accountRepo.findById(withdrawRequest.getAccountNum());
+        if (user.isPresent()){
+            account.get().setBalance(account.get().getBalance()-withdrawRequest.getWithdrawAmount());
+            accountRepo.save(account.get());
+            transaction.setTransactionType(TransactionType.WITHDRAW);
+            transaction.setDescription("withdraw of $" + String.format("%.2f",withdrawRequest.getWithdrawAmount()));
+            transaction.setTransactionDate(LocalDateTime.now());
+            transactionRepo.insert(transaction);
+            user.get().getTransaction().push(transaction);
+            userRepo.save(user.get());
+        } else
+            throw new MissingPropertyException("user does not exist");
+
+        return transaction;
     }
+
 }
