@@ -1,9 +1,6 @@
 package com.java.Bank.controller;
 
-import com.java.Bank.exceptions.InvalidTransactionIdException;
-import com.java.Bank.exceptions.InvalidTransactionTypeException;
-import com.java.Bank.exceptions.InvalidUserIdException;
-import com.java.Bank.exceptions.MissingPropertyException;
+import com.java.Bank.exceptions.*;
 import com.java.Bank.requests.DepositRequest;
 import com.java.Bank.requests.WithdrawRequest;
 import com.java.Bank.service.TransactionService;
@@ -51,7 +48,7 @@ public class TransactionController {
     public ResponseEntity deposit(@RequestBody DepositRequest depositRequest) {
         try {
             return ResponseEntity.ok(service.deposit(depositRequest));
-        } catch (MissingPropertyException e) {
+        } catch (MissingPropertyException | PositiveAmountException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -59,7 +56,7 @@ public class TransactionController {
     public ResponseEntity withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         try {
             return ResponseEntity.ok(service.withdraw(withdrawRequest));
-        } catch (MissingPropertyException e) {
+        } catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

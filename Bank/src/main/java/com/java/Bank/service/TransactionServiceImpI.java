@@ -1,10 +1,7 @@
 package com.java.Bank.service;
 
 import com.java.Bank.TransactionType;
-import com.java.Bank.exceptions.InvalidTransactionIdException;
-import com.java.Bank.exceptions.InvalidTransactionTypeException;
-import com.java.Bank.exceptions.InvalidUserIdException;
-import com.java.Bank.exceptions.MissingPropertyException;
+import com.java.Bank.exceptions.*;
 import com.java.Bank.model.Account;
 import com.java.Bank.model.Transaction;
 import com.java.Bank.model.User;
@@ -14,6 +11,7 @@ import com.java.Bank.repo.UserRepo;
 import com.java.Bank.requests.DepositRequest;
 import com.java.Bank.requests.WithdrawRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.ParameterOutOfBoundsException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -59,13 +57,15 @@ public class TransactionServiceImpI implements TransactionService {
     }
 
     @Override
-    public Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException {
+    public Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException, PositiveAmountException {
+        if(depositRequest.getDepositAmount()<0){
+            throw new PositiveAmountException("Deposit amount must be positive");
+        }
         Transaction transaction=new Transaction();
 
         Optional<User> user = userRepo.findById(depositRequest.getUserId());
 
         Optional<Account> account = accountRepo.findById(depositRequest.getAccountNum());
-
 
         if (user.isPresent()){
 
@@ -98,12 +98,19 @@ public class TransactionServiceImpI implements TransactionService {
     }
 
     @Override
-    public Transaction withdraw(WithdrawRequest withdrawRequest) throws MissingPropertyException {
+    public Transaction withdraw(WithdrawRequest withdrawRequest) throws MissingPropertyException, PositiveAmountException, InsufficientFundsException {
+        if(withdrawRequest.getWithdrawAmount()<0){
+            throw new PositiveAmountException("Withdraw amount must be positive");
+        }
+
         Transaction transaction=new Transaction();
 
         Optional<User> user = userRepo.findById(withdrawRequest.getUserId());
 
         Optional<Account> account = accountRepo.findById(withdrawRequest.getAccountNum());
+        if(account.get().getBalance()<withdrawRequest.getWithdrawAmount()){
+            throw new InsufficientFundsException("Cannot withdraw due to insufficient funds");
+        }
         if (user.isPresent()){
             account.get().setBalance(account.get().getBalance()-withdrawRequest.getWithdrawAmount());
             accountRepo.save(account.get());

@@ -1,0 +1,6 @@
+package com.java.Bank.exceptions;
+
+public class InsufficientFundsException extends Exception{
+    public InsufficientFundsException(String message){super(message);}
+    public InsufficientFundsException(String message, Throwable innerException){super(message,innerException);}
+}

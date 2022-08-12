@@ -1,5 +1,6 @@
 package com.java.Bank.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.java.Bank.TransactionType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -14,6 +15,7 @@ public class Transaction {
     private String transactionId;
     private TransactionType transactionType;;
     private String description;
+    @JsonFormat(pattern = "MM-dd-yyyy hh:mm:ss a")
     private LocalDateTime transactionDate;
 
     public Transaction(){

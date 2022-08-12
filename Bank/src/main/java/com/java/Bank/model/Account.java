@@ -1,5 +1,6 @@
 package com.java.Bank.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.java.Bank.AccountType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -14,6 +15,7 @@ public class Account {
     private String accountNum;
     private AccountType accountType;
     private double balance;
+    @JsonFormat(pattern = "MM-dd-yyyy hh:mm:ss a")
     private LocalDateTime accountopened;
 
     public Account(){
