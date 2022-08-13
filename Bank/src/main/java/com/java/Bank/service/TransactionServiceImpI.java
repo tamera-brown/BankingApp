@@ -27,6 +27,7 @@ public class TransactionServiceImpI implements TransactionService {
     @Autowired
     UserRepo userRepo;
 
+
     @Override
     public List<Transaction> getAllTransactions() {
         return transactionRepo.findAll();
@@ -58,7 +59,7 @@ public class TransactionServiceImpI implements TransactionService {
     @Override
     public Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException, PositiveAmountException {
         if (depositRequest.getDepositAmount() < 0) {
-            throw new PositiveAmountException("Deposit amount must be positive");
+            throw new PositiveAmountException("Withdraw amount must be positive");
         }
 
         Transaction transaction = new Transaction();
@@ -67,19 +68,20 @@ public class TransactionServiceImpI implements TransactionService {
 
         Optional<Account> account = accountRepo.findById(depositRequest.getAccountNum());
         Stack<Transaction> allTransactions = account.get().getTransaction();
-        if (user.isPresent()) {
-            account.get().setBalance(account.get().getBalance() + depositRequest.getDepositAmount());
-            transaction.setTransactionType(TransactionType.DEPOSIT);
-            transaction.setDescription("deposit of $" + String.format("%.2f", depositRequest.getDepositAmount()));
+       if(user.isPresent()) {
+            account.get().setBalance(account.get().getBalance() - depositRequest.getDepositAmount());
+            accountRepo.save(account.get());
+            transaction.setTransactionType(TransactionType.WITHDRAW);
+            transaction.setDescription("withdrawn $" + String.format("%.2f", depositRequest.getDepositAmount()));
             transactionRepo.insert(transaction);
             allTransactions.push(transaction);
             account.get().setTransaction(allTransactions);
             accountRepo.save(account.get());
-
         } else
             throw new MissingPropertyException("user does not exist");
 
         return transaction;
+
     }
 
 
@@ -126,7 +128,7 @@ public class TransactionServiceImpI implements TransactionService {
     }
 
     @Override
-    public Stack<Transaction> transfer(TransferRequest transferRequest) throws PositiveAmountException, MissingPropertyException, InsufficientFundsException, DuplicateAccountException {
+    public Stack<Transaction> transfer(TransferRequest transferRequest) throws PositiveAmountException, MissingPropertyException, InsufficientFundsException, DuplicateAccountException, InvalidUserIdException {
         Stack<Transaction>transactionStack=new Stack<>();
         if (transferRequest.getGiveAccNum().equals(transferRequest.getReceiveAccNum())) {
             throw new DuplicateAccountException("Cannot transfer to same account");

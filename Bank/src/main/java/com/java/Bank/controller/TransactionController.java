@@ -63,12 +63,12 @@ public class TransactionController {
         }
     }
 
-    ///TODO
+
     @PostMapping("/transfer")
         public ResponseEntity transfer(@RequestBody TransferRequest transferRequest) throws PositiveAmountException, InsufficientFundsException, MissingPropertyException,DuplicateAccountException {
             try{
                 return ResponseEntity.ok(service.transfer(transferRequest));
-            }catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException | DuplicateAccountException e){
+            }catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException | DuplicateAccountException | InvalidUserIdException e){
                 return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
             }
 
