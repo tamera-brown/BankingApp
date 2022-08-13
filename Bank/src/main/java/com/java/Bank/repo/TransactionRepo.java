@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepo extends MongoRepository<Transaction,String> {
-    @Query("{transactionType:'?0'}")
+    @Query("{'transactionType':?0}")
     List<Transaction> findTransactionByType(String transactionType);
+
 }

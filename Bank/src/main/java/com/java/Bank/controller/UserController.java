@@ -6,8 +6,6 @@ import com.java.Bank.exceptions.NullUserObjectException;
 import com.java.Bank.exceptions.UniqueUserEmailException;
 import com.java.Bank.model.User;
 import com.java.Bank.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     UserService service;
 
@@ -33,7 +31,7 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity getAllUsers(){
-        logger.info("Getting all Users.");return ResponseEntity.ok(service.getAllUsers());
+        return ResponseEntity.ok(service.getAllUsers());
     }
 
     @GetMapping("/{id}")
@@ -53,6 +51,7 @@ public class UserController {
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
+
 
     @PutMapping("/updateUser")
     public ResponseEntity updateUser(@RequestBody User updateUser){

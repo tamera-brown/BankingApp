@@ -16,12 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 
 @Service
 public class AccountServiceImpl implements AccountService {
+
 
 
     @Autowired
@@ -37,18 +40,17 @@ public class AccountServiceImpl implements AccountService {
     public Account addAccount(Account account, String userId) throws MissingPropertyException {
             Optional<User> user = userRepo.findById(userId);
         Transaction newTransaction = new Transaction();
+        Stack<Transaction>allTransactions=new Stack<>();
             if (user.isPresent()){
                 account.setAccountType(account.getAccountType());
                 account.setBalance(account.getBalance());
-                account.setAccountopened(LocalDateTime.now());
                 user.get().getAccount().add(account);
-                accountRepo.insert(account);
-                userRepo.save(user.get());
                 newTransaction.setTransactionType(TransactionType.DEPOSIT);
                 newTransaction.setDescription("initial deposit of $" + String.format("%.2f",user.get().getAccount().get(user.get().getAccount().size()-1).getBalance()));
-                newTransaction.setTransactionDate(LocalDateTime.now());
-                user.get().getTransaction().push(newTransaction);
+                allTransactions.push(newTransaction);
+                account.setTransaction(allTransactions);
                 transactionRepo.insert(newTransaction);
+                accountRepo.insert(account);
                 userRepo.save(user.get());
             } else
                 throw new MissingPropertyException("user does not exist");

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,17 +53,15 @@ public class UserServiceImpl implements UserService{
             Stack<Transaction> allTransactions=new Stack<>();
             newAccount.setAccountType(newUser.getAccount().get(0).getAccountType());
             newAccount.setBalance(newUser.getAccount().get(0).getBalance());
-            newAccount.setAccountopened(LocalDateTime.now());
             allAccounts.add(newAccount);
             newUser.setAccount(allAccounts);
             newTransaction.setTransactionType(TransactionType.DEPOSIT);
             newTransaction.setDescription("initial deposit of $" + String.format("%.2f",newUser.getAccount().get(0).getBalance()));
-            newTransaction.setTransactionDate(LocalDateTime.now());
             allTransactions.push(newTransaction);
-            newUser.setTransaction(allTransactions);
-            newUser.setPassword(hashPassword(newUser.getPassword()));;
-            accountRepo.insert(allAccounts);
+            newAccount.setTransaction(allTransactions);
+            newUser.setPassword(hashPassword(newUser.getPassword()));
             transactionRepo.insert(allTransactions);
+            accountRepo.insert(allAccounts);
             userRepo.insert(newUser);
 
         }

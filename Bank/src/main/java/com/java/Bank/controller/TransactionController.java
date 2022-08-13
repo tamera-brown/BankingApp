@@ -2,6 +2,7 @@ package com.java.Bank.controller;
 
 import com.java.Bank.exceptions.*;
 import com.java.Bank.requests.DepositRequest;
+import com.java.Bank.requests.TransferRequest;
 import com.java.Bank.requests.WithdrawRequest;
 import com.java.Bank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +37,12 @@ public class TransactionController {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/user/{userId}")
-    public ResponseEntity getTransactionsByUserId(@PathVariable String userId){
+
+    @GetMapping("/account/{accountNum}")
+    public ResponseEntity getTransactionsByaccountNum(@PathVariable String accountNum){
         try{
-            return ResponseEntity.ok(service.getTransactionsByUserId(userId));
-        }catch (InvalidUserIdException e){
+            return ResponseEntity.ok(service.getTransactionsByaccountNum(accountNum));
+        }catch (InvalidAccountIdException e){
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
@@ -60,4 +62,15 @@ public class TransactionController {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    ///TODO
+    @PostMapping("/transfer")
+        public ResponseEntity transfer(@RequestBody TransferRequest transferRequest) throws PositiveAmountException, InsufficientFundsException, MissingPropertyException,DuplicateAccountException {
+            try{
+                return ResponseEntity.ok(service.transfer(transferRequest));
+            }catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException | DuplicateAccountException e){
+                return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            }
+
+        }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Data
 @Document(collection = "transactions")
@@ -16,7 +17,8 @@ public class Transaction {
     private TransactionType transactionType;;
     private String description;
     @JsonFormat(pattern = "MM-dd-yyyy hh:mm:ss a")
-    private LocalDateTime transactionDate;
+    private LocalDateTime transactionDate=LocalDateTime.now(ZoneId.systemDefault());
+
 
     public Transaction(){
 
@@ -26,5 +28,6 @@ public class Transaction {
         this.transactionType = transactionType;
         this.description = description;
         this.transactionDate = transactionDate;
+
     }
 }
