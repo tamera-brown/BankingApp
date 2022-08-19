@@ -12,6 +12,10 @@ import java.util.Optional;
 public interface UserRepo extends MongoRepository<User, String> {
     @Query("{'email':?0}")
     Optional<User> findUserByEmail(String email);
+
+    @Query("{'username':?0}")
+    User findUserByUsername(String username);
+
     @Query("{'id':?0, 'account.$id':?0}")
     Optional<User> findUserByUserIdandAccountNum(String userId,String accountNum);
 

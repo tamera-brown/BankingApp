@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserService {
     List<User> getAllUsers();
 
-    User addUser(User newUser) throws UniqueUserEmailException, NullUserObjectException;
+    User createUser(User newUser) throws UniqueUserEmailException, NullUserObjectException;
 
     User updateUser(User updateUser);
 
@@ -21,4 +21,6 @@ public interface UserService {
     User getUserByEmail(String email) throws InvalidUserEmailException;
 
     User getUserById(String id) throws InvalidUserIdException;
+
+    User getUserByUsername(String username) throws InvalidUserEmailException;
 }

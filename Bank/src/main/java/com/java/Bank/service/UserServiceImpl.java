@@ -1,5 +1,6 @@
 package com.java.Bank.service;
 
+import com.java.Bank.Authority;
 import com.java.Bank.TransactionType;
 import com.java.Bank.exceptions.InvalidUserEmailException;
 import com.java.Bank.exceptions.InvalidUserIdException;
@@ -11,21 +12,19 @@ import com.java.Bank.model.User;
 import com.java.Bank.repo.AccountRepo;
 import com.java.Bank.repo.TransactionRepo;
 import com.java.Bank.repo.UserRepo;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
+import java.util.*;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     static Account newAccount=new Account();
     static Transaction newTransaction=new Transaction();
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     UserRepo userRepo;
@@ -42,7 +41,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User addUser(User newUser) throws UniqueUserEmailException, NullUserObjectException {
+    public User createUser(User newUser) throws UniqueUserEmailException, NullUserObjectException {
         if(newUser==null){
             throw new NullUserObjectException("User cann ont be null");
         }
@@ -59,7 +58,8 @@ public class UserServiceImpl implements UserService{
             newTransaction.setDescription("initial deposit of $" + String.format("%.2f",newUser.getAccount().get(0).getBalance()));
             allTransactions.push(newTransaction);
             newAccount.setTransaction(allTransactions);
-            newUser.setPassword(hashPassword(newUser.getPassword()));
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            newUser.setAuthorities(List.of(Authority.ROLE_USER));
             transactionRepo.insert(allTransactions);
             accountRepo.insert(allAccounts);
             userRepo.insert(newUser);
@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserService{
 
     }
 
+
     @Override
     public User getUserById(String id) throws InvalidUserIdException {
         User retrieved = null;
@@ -113,8 +114,11 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-    private String hashPassword(String pwd){
-        return BCrypt.hashpw(pwd,BCrypt.gensalt());
+    @Override
+    public User getUserByUsername(String username) throws InvalidUserEmailException {
+        return null;
+
     }
+
 }
 

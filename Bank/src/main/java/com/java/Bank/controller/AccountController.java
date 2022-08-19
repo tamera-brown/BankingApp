@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
@@ -18,7 +20,7 @@ public class AccountController {
     AccountService service;
 
     @PostMapping("/AddAccount/{userId}")
-    public ResponseEntity addAccount(@RequestBody Account newAccount, @PathVariable String userId) {
+    public ResponseEntity addAccount(@RequestBody @Valid Account newAccount, @PathVariable String userId) {
         try {
             return new ResponseEntity(service.addAccount(newAccount,userId), HttpStatus.CREATED);
         }catch (MissingPropertyException e){

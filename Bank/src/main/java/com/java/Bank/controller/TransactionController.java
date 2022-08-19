@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {
@@ -47,7 +49,7 @@ public class TransactionController {
         }
     }
     @PostMapping("/deposit")
-    public ResponseEntity deposit(@RequestBody DepositRequest depositRequest) {
+    public ResponseEntity deposit(@RequestBody @Valid DepositRequest depositRequest) {
         try {
             return ResponseEntity.ok(service.deposit(depositRequest));
         } catch (MissingPropertyException | PositiveAmountException e) {
@@ -55,7 +57,7 @@ public class TransactionController {
         }
     }
     @PostMapping("/withdraw")
-    public ResponseEntity withdraw(@RequestBody WithdrawRequest withdrawRequest) {
+    public ResponseEntity withdraw(@RequestBody @Valid WithdrawRequest withdrawRequest) {
         try {
             return ResponseEntity.ok(service.withdraw(withdrawRequest));
         } catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException e) {
@@ -65,7 +67,7 @@ public class TransactionController {
 
 
     @PostMapping("/transfer")
-        public ResponseEntity transfer(@RequestBody TransferRequest transferRequest) throws PositiveAmountException, InsufficientFundsException, MissingPropertyException,DuplicateAccountException {
+        public ResponseEntity transfer(@RequestBody @Valid TransferRequest transferRequest) throws PositiveAmountException, InsufficientFundsException, MissingPropertyException,DuplicateAccountException {
             try{
                 return ResponseEntity.ok(service.transfer(transferRequest));
             }catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException | DuplicateAccountException | InvalidUserIdException e){

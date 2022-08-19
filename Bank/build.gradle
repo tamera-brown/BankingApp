@@ -21,9 +21,9 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.7.1'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.mindrot:jbcrypt:0.4'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 	implementation 'org.springframework.boot:spring-boot-starter-security:2.7.2'
+	implementation 'com.auth0:java-jwt:4.0.0'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
