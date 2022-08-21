@@ -3,6 +3,7 @@ package com.java.Bank.controller;
 
 import com.java.Bank.config.JwtTokenService;
 import com.java.Bank.config.JwtUserDetailsService;
+import com.java.Bank.payload.AuthenticationResponse;
 import com.java.Bank.requests.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +39,11 @@ public class AuthController {
         }
 
         final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, jwtTokenService.generateToken(userDetails)).body(userDetails);
+        final AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        authenticationResponse.setAccessToken(jwtTokenService.generateToken(userDetails));
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, authenticationResponse.getTokenType()+" "+authenticationResponse.getAccessToken()).body(userDetails);
     }
 
 }
+
 

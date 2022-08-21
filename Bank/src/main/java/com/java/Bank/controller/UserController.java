@@ -1,9 +1,6 @@
 package com.java.Bank.controller;
 
-import com.java.Bank.exceptions.InvalidUserEmailException;
-import com.java.Bank.exceptions.InvalidUserIdException;
-import com.java.Bank.exceptions.NullUserObjectException;
-import com.java.Bank.exceptions.UniqueUserEmailException;
+import com.java.Bank.exceptions.*;
 import com.java.Bank.model.User;
 import com.java.Bank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +55,7 @@ public class UserController {
     public ResponseEntity getUserByUsername(@PathVariable String username){
         try{
             return ResponseEntity.ok(service.getUserByUsername(username));
-        }catch (InvalidUserEmailException e){
+        }catch (InvalidUsernameException e){
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }

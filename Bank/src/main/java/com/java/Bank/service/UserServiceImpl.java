@@ -2,10 +2,7 @@ package com.java.Bank.service;
 
 import com.java.Bank.Authority;
 import com.java.Bank.TransactionType;
-import com.java.Bank.exceptions.InvalidUserEmailException;
-import com.java.Bank.exceptions.InvalidUserIdException;
-import com.java.Bank.exceptions.NullUserObjectException;
-import com.java.Bank.exceptions.UniqueUserEmailException;
+import com.java.Bank.exceptions.*;
 import com.java.Bank.model.Account;
 import com.java.Bank.model.Transaction;
 import com.java.Bank.model.User;
@@ -115,9 +112,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) throws InvalidUserEmailException {
-        return null;
-
+    public User getUserByUsername(String username) throws InvalidUsernameException {
+            try{
+               return userRepo.findUserByUsername(username);
+            }catch (Exception e){
+                throw new InvalidUsernameException("User with that username does not exist");
+            }
     }
 
 }
