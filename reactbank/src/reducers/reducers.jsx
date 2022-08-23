@@ -1,3 +1,5 @@
+import { ACCESS_TOKEN } from "../components/constants/constants"
+
 const initialState={
     currentUser:null,
     isAuthenticated:false
@@ -12,6 +14,7 @@ export default function appReducer(state=initialState,action){
                 isAuthenticated:true
             }
         case "USER_SIGN_OUT":
+            sessionStorage.removeItem('Authorization')
             return{
                 ...state,
                 currentUser:null,

@@ -1,4 +1,4 @@
-import { BrowserRouter as Routes,Route, Router } from 'react-router-dom';
+import { BrowserRouter as Router,Routes, Route } from 'react-router-dom';
 import Home from './components/Home/home';
 import Dashboard from './components/Dashboard/dashboard';
 import Accounts from './components/Accounts/accounts';
@@ -16,14 +16,14 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/dashboard' element={<Dashboard/>}/>
-        <Route path='/accounts' element={<Accounts/>}/>
-        <Route path='/deposit' element={<Deposit/>}/>
-        <Route path='/withdraw' element={<Withdraw/>}/>
-        <Route path='/transfer' element={<Transfer/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/profile' element={<Profile/>}/>
-        <Route path='/register' element={<Register/>}/>
+        <Route path='/dashboard' element={<Dashboard/>}></Route>
+        <Route path='/accounts' element={<Accounts/>}></Route>
+        <Route path='/deposit' element={<Deposit/>}></Route>
+        <Route path='/withdraw' element={<Withdraw/>}></Route>
+        <Route path='/transfer' element={<Transfer/>}></Route>
+        <Route path='/login' element={<Login/>}></Route>
+        <Route path='/profile' element={<Profile/>}></Route>
+        <Route path='/register' element={<Register/>}></Route>
       </Routes>
     </Router>
     </div>
