@@ -23,6 +23,8 @@ public class SecurityConfig {
    @Autowired
    Filter jwtRequestFilter;
 
+    @Autowired
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
     @Bean
     public UserDetailsService userDetailsService() {
         return new JwtUserDetailsService();
@@ -53,7 +55,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authenticationProvider(authenticationProvider());
-        http.cors().and().csrf().disable();
+        http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/api/auth/login").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/users/createUser").permitAll();

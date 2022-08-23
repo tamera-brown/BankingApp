@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +21,16 @@ public class User {
     private String userId;
     private String firstName;
     private String lastName;
+    @Pattern(regexp = "^\\d+ [A-Z][a-z]* (Street|Avenue) [A-Z][a-z]*, [A-Z]{2} \\d{5}$")
     private String address;
     @Indexed(unique = true)
     private String username;
     @Indexed(unique = true)
+    @Email
     private String email;
+    @Pattern(regexp = "^\\(\\d{3}\\)\\s?\\d{3}-\\d{4}$")
     private String phoneNum;
+    @Pattern(regexp ="^(?=.*[a-z])(?=.*\\d)(?=.*[A-Z])(?=.*[@#$%!*]).{8,15}")
     private String password;
     @DBRef
     private List<Account> account;

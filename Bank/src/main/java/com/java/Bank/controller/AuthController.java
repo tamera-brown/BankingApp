@@ -41,7 +41,7 @@ public class AuthController {
         final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setAccessToken(jwtTokenService.generateToken(userDetails));
-        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, authenticationResponse.getTokenType()+" "+authenticationResponse.getAccessToken()).body(userDetails);
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, authenticationResponse.getAccessToken()).body(authenticationResponse);
     }
 
 }
