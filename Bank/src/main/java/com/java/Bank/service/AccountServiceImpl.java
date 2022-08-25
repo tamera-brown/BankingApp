@@ -2,10 +2,7 @@ package com.java.Bank.service;
 
 import com.java.Bank.AccountType;
 import com.java.Bank.TransactionType;
-import com.java.Bank.exceptions.InvalidAccountIdException;
-import com.java.Bank.exceptions.InvalidAccountTypeException;
-import com.java.Bank.exceptions.InvalidUserIdException;
-import com.java.Bank.exceptions.MissingPropertyException;
+import com.java.Bank.exceptions.*;
 import com.java.Bank.model.Account;
 import com.java.Bank.model.Transaction;
 import com.java.Bank.model.User;
@@ -64,15 +61,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Account> getAccountsByUserId(String userId) throws InvalidUserIdException {
-        User retrieved = null;
-        Optional<User> user = userRepo.findById(userId);
-        if (user.isPresent()) {
-            retrieved = user.get();
-            return retrieved.getAccount();
-        }
-        else{
-            throw new InvalidUserIdException("User with that id does not exist");
+    public List<Account> getAccountsByUsername(String username) throws InvalidUsernameException {
+        try{
+            User user= userRepo.findUserByUsername(username);
+            return user.getAccount();
+        } catch (Exception e){
+            throw new InvalidUsernameException("User with that username does not exist");
         }
     }
 

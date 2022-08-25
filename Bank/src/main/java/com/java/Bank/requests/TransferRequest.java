@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class TransferRequest {
-    private String giveUserId;
+    private String giveUsername;
     private String giveAccNum;
-    private String receiveUserId;
+    private String receiveUsername;
     private String receiveAccNum;
     private Double transferAmount;
 

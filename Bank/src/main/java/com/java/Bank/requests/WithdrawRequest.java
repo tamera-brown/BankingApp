@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class WithdrawRequest {
-    private String userId;
+    private String username;
     private String accountNum;
     private Double withdrawAmount;
 }

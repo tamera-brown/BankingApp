@@ -1,9 +1,6 @@
 package com.java.Bank.controller;
 
-import com.java.Bank.exceptions.InvalidAccountIdException;
-import com.java.Bank.exceptions.InvalidAccountTypeException;
-import com.java.Bank.exceptions.InvalidUserIdException;
-import com.java.Bank.exceptions.MissingPropertyException;
+import com.java.Bank.exceptions.*;
 import com.java.Bank.model.Account;
 import com.java.Bank.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +30,11 @@ public class AccountController {
         return ResponseEntity.ok(service.getAllAccounts());
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity getAccountsByUserId(@PathVariable String userId){
+    @GetMapping("/user/{username}")
+    public ResponseEntity getAccountsByUsername(@PathVariable String username){
         try{
-            return ResponseEntity.ok(service.getAccountsByUserId(userId));
-        }catch (InvalidUserIdException e){
+            return ResponseEntity.ok(service.getAccountsByUsername(username));
+        }catch (InvalidUsernameException e){
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }

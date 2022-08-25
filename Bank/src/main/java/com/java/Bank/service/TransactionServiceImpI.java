@@ -59,29 +59,30 @@ public class TransactionServiceImpI implements TransactionService {
     @Override
     public Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException, PositiveAmountException {
         if (depositRequest.getDepositAmount() < 0) {
-            throw new PositiveAmountException("Withdraw amount must be positive");
+            throw new PositiveAmountException("Deposit amount must be positive");
         }
 
         Transaction transaction = new Transaction();
+        try {
+            User user = userRepo.findUserByUsername(depositRequest.getUsername());
+            for (Account account : user.getAccount()) {
+                if (account.getAccountNum().equals(depositRequest.getAccountNum())) {
+                    Stack<Transaction> allTransactions = account.getTransaction();
+                    account.setBalance(account.getBalance() + depositRequest.getDepositAmount());
+                    accountRepo.save(account);
+                    transaction.setTransactionType(TransactionType.DEPOSIT);
+                    transaction.setDescription("deposited $" + String.format("%.2f", depositRequest.getDepositAmount()));
+                    transactionRepo.insert(transaction);
+                    allTransactions.push(transaction);
+                    account.setTransaction(allTransactions);
+                    accountRepo.save(account);
 
-        Optional<User> user = userRepo.findById(depositRequest.getUserId());
-
-        Optional<Account> account = accountRepo.findById(depositRequest.getAccountNum());
-        Stack<Transaction> allTransactions = account.get().getTransaction();
-       if(user.isPresent()) {
-            account.get().setBalance(account.get().getBalance() - depositRequest.getDepositAmount());
-            accountRepo.save(account.get());
-            transaction.setTransactionType(TransactionType.WITHDRAW);
-            transaction.setDescription("withdrawn $" + String.format("%.2f", depositRequest.getDepositAmount()));
-            transactionRepo.insert(transaction);
-            allTransactions.push(transaction);
-            account.get().setTransaction(allTransactions);
-            accountRepo.save(account.get());
-        } else
+                }
+            }
+        }catch (Exception e){
             throw new MissingPropertyException("user does not exist");
-
+        }
         return transaction;
-
     }
 
 
@@ -104,25 +105,28 @@ public class TransactionServiceImpI implements TransactionService {
         }
 
         Transaction transaction = new Transaction();
+        try{
 
-        Optional<User> user = userRepo.findById(withdrawRequest.getUserId());
-
-        Optional<Account> account = accountRepo.findById(withdrawRequest.getAccountNum());
-        Stack<Transaction> allTransactions = account.get().getTransaction();
-        if (account.get().getBalance() < withdrawRequest.getWithdrawAmount()) {
-            throw new InsufficientFundsException("Cannot withdraw due to insufficient funds");
-        }
-        if (user.isPresent()) {
-            account.get().setBalance(account.get().getBalance() - withdrawRequest.getWithdrawAmount());
-            accountRepo.save(account.get());
-            transaction.setTransactionType(TransactionType.WITHDRAW);
-            transaction.setDescription("withdrawn $" + String.format("%.2f", withdrawRequest.getWithdrawAmount()));
-            transactionRepo.insert(transaction);
-            allTransactions.push(transaction);
-            account.get().setTransaction(allTransactions);
-            accountRepo.save(account.get());
-        } else
+            User user = userRepo.findUserByUsername(withdrawRequest.getUsername());
+            for (Account account : user.getAccount()) {
+                if (account.getAccountNum().equals(withdrawRequest.getAccountNum())) {
+                    Stack<Transaction> allTransactions = account.getTransaction();
+                    if (account.getBalance() < withdrawRequest.getWithdrawAmount()) {
+                        throw new InsufficientFundsException("Cannot withdraw due to insufficient funds");
+                    }
+                    account.setBalance(account.getBalance() - withdrawRequest.getWithdrawAmount());
+                    accountRepo.save(account);
+                    transaction.setTransactionType(TransactionType.WITHDRAW);
+                    transaction.setDescription("withdrawn $" + String.format("%.2f", withdrawRequest.getWithdrawAmount()));
+                    transactionRepo.insert(transaction);
+                    allTransactions.push(transaction);
+                    account.setTransaction(allTransactions);
+                    accountRepo.save(account);
+                }
+            }
+        }catch (Exception e){
             throw new MissingPropertyException("user does not exist");
+        }
 
         return transaction;
     }
@@ -136,11 +140,11 @@ public class TransactionServiceImpI implements TransactionService {
         DepositRequest newDepositRequest = new DepositRequest();
         WithdrawRequest newWithdrawRequest = new WithdrawRequest();
 
-        newWithdrawRequest.setUserId(transferRequest.getGiveUserId());
+        newWithdrawRequest.setUsername(transferRequest.getGiveUsername());
         newWithdrawRequest.setAccountNum(transferRequest.getGiveAccNum());
         newWithdrawRequest.setWithdrawAmount(transferRequest.getTransferAmount());
         transactionStack.push(withdraw(newWithdrawRequest));
-        newDepositRequest.setUserId(transferRequest.getReceiveUserId());
+        newDepositRequest.setUsername(transferRequest.getReceiveUsername());
         newDepositRequest.setAccountNum(transferRequest.getReceiveAccNum());
         newDepositRequest.setDepositAmount(transferRequest.getTransferAmount());
         transactionStack.push(deposit(newDepositRequest));
