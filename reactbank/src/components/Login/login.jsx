@@ -7,6 +7,7 @@ import { useSnackbar } from "notistack";
 import {  useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@mui/material";
+
 const Login=()=>{
     const dispatch = useDispatch()
     const {enqueueSnackbar}=useSnackbar()
@@ -60,8 +61,6 @@ const Login=()=>{
                             },
                         });
                        
-                       
-                        
                         getCurrentUser()
                         .then(response=>{
                             enqueueSnackbar('User authenticated',{

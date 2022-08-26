@@ -9,6 +9,7 @@ import Register from './components/Register/register';
 import Profile from './components/Profile/profile';
 import Login from './components/Login/login';
 import './App.css';
+import NewAccount from './components/Accounts/newAccount';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/profile' element={<Profile/>}></Route>
         <Route path='/register' element={<Register/>}></Route>
+        <Route path='/newAccount'element={<NewAccount/>}></Route>
       </Routes>
     </Router>
     </div>

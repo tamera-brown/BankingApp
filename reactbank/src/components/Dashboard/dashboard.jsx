@@ -16,7 +16,7 @@ function Dashboard(){
         <h1>Hello {isAuthenticated ? currentUser.username:"Guest"}!</h1>
         <form >
 
-    <Link to = '/accounts'><Button className="menuButton">New Account&nbsp;<FontAwesomeIcon icon={faWallet} size="2xl"/></Button></Link>
+    <Link to = '/accounts'><Button className="menuButton">Account&nbsp;<FontAwesomeIcon icon={faWallet} size="2xl"/></Button></Link>
     <Link to = '/deposit'><Button className="menuButton">Deposit&nbsp; <FontAwesomeIcon icon={faMoneyCheckDollar} size="2xl"/></Button></Link>
     <Link to = '/withdraw'><Button className="menuButton" >Withdraw&nbsp; <FontAwesomeIcon icon={faDollarSign} size="2xl"/><FontAwesomeIcon icon={faMinus} size="2xl"/></Button></Link>
     <Link to = '/transfer'><Button className="menuButton">Transfer&nbsp;<FontAwesomeIcon icon={faMoneyBillTransfer} size="2xl"/></Button></Link>

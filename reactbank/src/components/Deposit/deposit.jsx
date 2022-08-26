@@ -14,7 +14,7 @@ const Deposit=()=>{
     const currentUser=useSelector(currentUserData)
     const navigate = useNavigate();
     const {enqueueSnackbar}=useSnackbar()
-    // const navigate = useNavigate();
+    
     const MyTextInput = ({ label, ...props }) => {
       // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
       // which we can spread on <input>. We can use field meta to show an error
