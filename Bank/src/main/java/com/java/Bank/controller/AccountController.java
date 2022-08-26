@@ -17,10 +17,10 @@ public class AccountController {
     @Autowired
     AccountService service;
 
-    @PostMapping("/AddAccount/{userId}")
-    public ResponseEntity addAccount(@RequestBody @Valid Account newAccount, @PathVariable String userId) {
+    @PostMapping("/AddAccount/{username}")
+    public ResponseEntity addAccount(@RequestBody @Valid Account newAccount, @PathVariable String username) {
         try {
-            return new ResponseEntity(service.addAccount(newAccount,userId), HttpStatus.CREATED);
+            return new ResponseEntity(service.addAccount(newAccount,username), HttpStatus.CREATED);
         }catch (MissingPropertyException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

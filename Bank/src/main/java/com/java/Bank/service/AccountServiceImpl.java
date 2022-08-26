@@ -12,17 +12,12 @@ import com.java.Bank.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Optional;
 import java.util.Stack;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-
-
 
     @Autowired
     AccountRepo accountRepo;
@@ -34,21 +29,21 @@ public class AccountServiceImpl implements AccountService {
     TransactionRepo transactionRepo;
 
     @Override
-    public Account addAccount(Account account, String userId) throws MissingPropertyException {
-            Optional<User> user = userRepo.findById(userId);
+    public Account addAccount(Account account, String username) throws MissingPropertyException {
+            User user = userRepo.findUserByUsername(username);
         Transaction newTransaction = new Transaction();
         Stack<Transaction>allTransactions=new Stack<>();
-            if (user.isPresent()){
+            if (user!=null){
                 account.setAccountType(account.getAccountType());
                 account.setBalance(account.getBalance());
-                user.get().getAccount().add(account);
+                user.getAccount().add(account);
                 newTransaction.setTransactionType(TransactionType.DEPOSIT);
-                newTransaction.setDescription("initial deposit of $" + String.format("%.2f",user.get().getAccount().get(user.get().getAccount().size()-1).getBalance()));
+                newTransaction.setDescription("initial deposit of $" + String.format("%.2f",user.getAccount().get(user.getAccount().size()-1).getBalance()));
                 allTransactions.push(newTransaction);
                 account.setTransaction(allTransactions);
                 transactionRepo.insert(newTransaction);
                 accountRepo.insert(account);
-                userRepo.save(user.get());
+                userRepo.save(user);
             } else
                 throw new MissingPropertyException("user does not exist");
 

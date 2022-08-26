@@ -55,7 +55,6 @@ public class TransactionServiceImpI implements TransactionService {
         }
 
     }
-
     @Override
     public Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException, PositiveAmountException {
         if (depositRequest.getDepositAmount() < 0) {
@@ -83,19 +82,6 @@ public class TransactionServiceImpI implements TransactionService {
             throw new MissingPropertyException("user does not exist");
         }
         return transaction;
-    }
-
-
-    @Override
-    public List<Transaction> getTransactionsByaccountNum(String accountNum) throws InvalidAccountIdException {
-
-        try {
-            Stack<Transaction> transactions = accountRepo.findById(accountNum).get().getTransaction();
-            return transactions;
-        } catch (Exception e) {
-            throw new InvalidAccountIdException("Account with that type does not exist");
-        }
-
     }
 
     @Override
@@ -133,7 +119,7 @@ public class TransactionServiceImpI implements TransactionService {
 
     @Override
     public Stack<Transaction> transfer(TransferRequest transferRequest) throws PositiveAmountException, MissingPropertyException, InsufficientFundsException, DuplicateAccountException, InvalidUserIdException {
-        Stack<Transaction>transactionStack=new Stack<>();
+        Stack<Transaction> transactionStack = new Stack<>();
         if (transferRequest.getGiveAccNum().equals(transferRequest.getReceiveAccNum())) {
             throw new DuplicateAccountException("Cannot transfer to same account");
         }
@@ -152,4 +138,20 @@ public class TransactionServiceImpI implements TransactionService {
         return transactionStack;
 
     }
+
+
+    @Override
+    public List<Transaction> getTransactionsByaccountNum(String accountNum) throws InvalidAccountIdException {
+
+        try {
+            Stack<Transaction> transactions = accountRepo.findById(accountNum).get().getTransaction();
+            return transactions;
+        } catch (Exception e) {
+            throw new InvalidAccountIdException("Account with that type does not exist");
+        }
+
+    }
+
+
+
 }
