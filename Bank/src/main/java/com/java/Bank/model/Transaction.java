@@ -15,6 +15,7 @@ public class Transaction {
     @Id
     private String transactionId;
     private TransactionType transactionType;;
+    private Double transactionAmount;
     private String description;
     @JsonFormat(pattern = "MM-dd-yyyy hh:mm:ss a")
     private LocalDateTime transactionDate=LocalDateTime.now(ZoneId.systemDefault());
@@ -24,8 +25,9 @@ public class Transaction {
 
     }
 
-    public Transaction(TransactionType transactionType, String description, LocalDateTime transactionDate) {
+    public Transaction(TransactionType transactionType, Double transactionAmount, String description, LocalDateTime transactionDate) {
         this.transactionType = transactionType;
+        this.transactionAmount=transactionAmount;
         this.description = description;
         this.transactionDate = transactionDate;
 

@@ -12,6 +12,7 @@ import com.java.Bank.requests.DepositRequest;
 import com.java.Bank.requests.TransferRequest;
 import com.java.Bank.requests.WithdrawRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,12 +26,12 @@ public class TransactionServiceImpI implements TransactionService {
     @Autowired
     AccountRepo accountRepo;
     @Autowired
-    UserRepo userRepo;
+    AccountServiceImpl accountService;
 
 
     @Override
     public List<Transaction> getAllTransactions() {
-        return transactionRepo.findAll();
+        return transactionRepo.findAll(Sort.by(Sort.Direction.DESC, "transactionDate"));
     }
 
     @Override
@@ -55,46 +56,45 @@ public class TransactionServiceImpI implements TransactionService {
         }
 
     }
+
     @Override
-    public Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException, PositiveAmountException {
+    public Transaction deposit(DepositRequest depositRequest) throws PositiveAmountException, InvalidUsernameException, InvalidAccountNumException {
         if (depositRequest.getDepositAmount() < 0) {
             throw new PositiveAmountException("Deposit amount must be positive");
         }
 
         Transaction transaction = new Transaction();
-        try {
-            User user = userRepo.findUserByUsername(depositRequest.getUsername());
-            for (Account account : user.getAccount()) {
+
+            List<Account> userAccount = accountService.getAccountsByUsername(depositRequest.getUsername());
+            for (Account account : userAccount) {
                 if (account.getAccountNum().equals(depositRequest.getAccountNum())) {
                     Stack<Transaction> allTransactions = account.getTransaction();
                     account.setBalance(account.getBalance() + depositRequest.getDepositAmount());
                     accountRepo.save(account);
                     transaction.setTransactionType(TransactionType.DEPOSIT);
-                    transaction.setDescription("deposited $" + String.format("%.2f", depositRequest.getDepositAmount()));
+                    transaction.setTransactionAmount(depositRequest.getDepositAmount());
+                    transaction.setDescription("deposited $" + String.format("%.2f", transaction.getTransactionAmount()));
                     transactionRepo.insert(transaction);
                     allTransactions.push(transaction);
                     account.setTransaction(allTransactions);
                     accountRepo.save(account);
-
+                    return transaction;
                 }
+
             }
-        }catch (Exception e){
-            throw new MissingPropertyException("user does not exist");
-        }
-        return transaction;
+                throw new InvalidAccountNumException("Account number does not belong to user");
     }
 
     @Override
-    public Transaction withdraw(WithdrawRequest withdrawRequest) throws MissingPropertyException, PositiveAmountException, InsufficientFundsException {
+    public Transaction withdraw(WithdrawRequest withdrawRequest) throws PositiveAmountException, InsufficientFundsException, InvalidAccountNumException, InvalidUsernameException {
         if (withdrawRequest.getWithdrawAmount() < 0) {
             throw new PositiveAmountException("Withdraw amount must be positive");
         }
 
         Transaction transaction = new Transaction();
-        try{
 
-            User user = userRepo.findUserByUsername(withdrawRequest.getUsername());
-            for (Account account : user.getAccount()) {
+            List<Account> userAccount = accountService.getAccountsByUsername(withdrawRequest.getUsername());
+            for (Account account : userAccount) {
                 if (account.getAccountNum().equals(withdrawRequest.getAccountNum())) {
                     Stack<Transaction> allTransactions = account.getTransaction();
                     if (account.getBalance() < withdrawRequest.getWithdrawAmount()) {
@@ -103,55 +103,51 @@ public class TransactionServiceImpI implements TransactionService {
                     account.setBalance(account.getBalance() - withdrawRequest.getWithdrawAmount());
                     accountRepo.save(account);
                     transaction.setTransactionType(TransactionType.WITHDRAW);
-                    transaction.setDescription("withdrawn $" + String.format("%.2f", withdrawRequest.getWithdrawAmount()));
+                    transaction.setTransactionAmount(withdrawRequest.getWithdrawAmount());
+                    transaction.setDescription("withdrawn $" + String.format("%.2f", transaction.getTransactionAmount()));
                     transactionRepo.insert(transaction);
                     allTransactions.push(transaction);
                     account.setTransaction(allTransactions);
                     accountRepo.save(account);
+                    return transaction;
                 }
             }
-        }catch (Exception e){
-            throw new MissingPropertyException("user does not exist");
-        }
+        throw new InvalidAccountNumException("Account number does not belong to user");
 
-        return transaction;
     }
 
     @Override
-    public Stack<Transaction> transfer(TransferRequest transferRequest) throws PositiveAmountException, MissingPropertyException, InsufficientFundsException, DuplicateAccountException, InvalidUserIdException {
+    public Stack<Transaction> transfer(TransferRequest transferRequest) throws DuplicateAccountException, InvalidUsernameException, InvalidAccountNumException, PositiveAmountException, InsufficientFundsException {
         Stack<Transaction> transactionStack = new Stack<>();
         if (transferRequest.getGiveAccNum().equals(transferRequest.getReceiveAccNum())) {
             throw new DuplicateAccountException("Cannot transfer to same account");
         }
+
         DepositRequest newDepositRequest = new DepositRequest();
         WithdrawRequest newWithdrawRequest = new WithdrawRequest();
 
-        newWithdrawRequest.setUsername(transferRequest.getGiveUsername());
-        newWithdrawRequest.setAccountNum(transferRequest.getGiveAccNum());
-        newWithdrawRequest.setWithdrawAmount(transferRequest.getTransferAmount());
-        transactionStack.push(withdraw(newWithdrawRequest));
-        newDepositRequest.setUsername(transferRequest.getReceiveUsername());
-        newDepositRequest.setAccountNum(transferRequest.getReceiveAccNum());
-        newDepositRequest.setDepositAmount(transferRequest.getTransferAmount());
-        transactionStack.push(deposit(newDepositRequest));
 
-        return transactionStack;
+        List<Account> userAccount = accountService.getAccountsByUsername(transferRequest.getUsername());
+        for (Account account : userAccount) {
+            if (account.getAccountNum().equals(transferRequest.getReceiveAccNum())) {
 
-    }
+                newWithdrawRequest.setUsername(transferRequest.getUsername());
+                newWithdrawRequest.setAccountNum(transferRequest.getGiveAccNum());
+                newWithdrawRequest.setWithdrawAmount(transferRequest.getTransferAmount());
+                transactionStack.push(withdraw(newWithdrawRequest));
+                newDepositRequest.setUsername(transferRequest.getUsername());
+                newDepositRequest.setAccountNum(transferRequest.getReceiveAccNum());
+                newDepositRequest.setDepositAmount(transferRequest.getTransferAmount());
+                transactionStack.push(deposit(newDepositRequest));
 
 
-    @Override
-    public List<Transaction> getTransactionsByaccountNum(String accountNum) throws InvalidAccountIdException {
+                return transactionStack;
 
-        try {
-            Stack<Transaction> transactions = accountRepo.findById(accountNum).get().getTransaction();
-            return transactions;
-        } catch (Exception e) {
-            throw new InvalidAccountIdException("Account with that type does not exist");
+            }
         }
+        throw new InvalidAccountNumException("Account number does not belong to user");
 
     }
-
 
 
 }

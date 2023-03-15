@@ -28,8 +28,11 @@ public class User {
     @Indexed(unique = true)
     @Email
     private String email;
+    //format - (XXX)XXX-XXXX
     @Pattern(regexp = "^\\(\\d{3}\\)\\s?\\d{3}-\\d{4}$")
     private String phoneNum;
+    // criteria - at least: 1 number, 1 lower case, 1 upper case, 1 special
+    // character, 8-15 characters long
     @Pattern(regexp ="^(?=.*[a-z])(?=.*\\d)(?=.*[A-Z])(?=.*[@#$%!*]).{8,15}")
     private String password;
     @DBRef

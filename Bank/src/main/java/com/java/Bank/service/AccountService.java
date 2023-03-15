@@ -15,5 +15,9 @@ public interface AccountService {
 
     List<Account> getAccountsByAccountType(String type) throws InvalidAccountTypeException;
 
-    void deleteAccountById(String id) throws InvalidAccountIdException;
+    void closeAccountById(String id) throws InvalidAccountIdException;
+
+    Account getAccountById(String id) throws InvalidAccountIdException;
+
+    List<Account> getAccountsByAccountStatus(String status) throws InvalidAccountStatusException;
 }

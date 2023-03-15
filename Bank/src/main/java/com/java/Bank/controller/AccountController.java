@@ -17,6 +17,14 @@ public class AccountController {
     @Autowired
     AccountService service;
 
+    @GetMapping("/{id}")
+    public ResponseEntity getAccountById(@PathVariable String id){
+        try {
+            return  ResponseEntity.ok(service.getAccountById(id));
+        }catch(InvalidAccountIdException e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
     @PostMapping("/AddAccount/{username}")
     public ResponseEntity addAccount(@RequestBody @Valid Account newAccount, @PathVariable String username) {
         try {
@@ -38,7 +46,7 @@ public class AccountController {
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/{type}")
+    @GetMapping("/type/{type}")
     public ResponseEntity getAccountByAccountType(@PathVariable String type){
         try{
             return ResponseEntity.ok(service.getAccountsByAccountType(type));
@@ -46,11 +54,19 @@ public class AccountController {
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
-    @DeleteMapping("/deleteAccount/{id}")
-    public ResponseEntity deleteAccountById(@PathVariable String id){
+    @GetMapping("/status/{status}")
+    public ResponseEntity getAccountByAccountStatus(@PathVariable String status){
+        try{
+            return ResponseEntity.ok(service.getAccountsByAccountStatus(status));
+        }catch (InvalidAccountStatusException e){
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+    @DeleteMapping("/closeAccount/{id}")
+    public ResponseEntity closeAccountById(@PathVariable String id){
         try {
-            service.deleteAccountById(id);
-            return new ResponseEntity("Account successfully deleted", HttpStatus.NO_CONTENT);
+            service.closeAccountById(id);
+            return new ResponseEntity("Account successfully closed", HttpStatus.NO_CONTENT);
         }catch(InvalidAccountIdException ex){
             return new ResponseEntity("Account not found", HttpStatus.NOT_FOUND);
         }

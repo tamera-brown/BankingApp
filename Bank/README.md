@@ -15,7 +15,7 @@ docker-compose build
 docker-compose up
 ```
 
-##Swagger UI
+##Swagger UI Documentation
 ```
 http://localhost:8080/swagger-ui/index.html
 ```

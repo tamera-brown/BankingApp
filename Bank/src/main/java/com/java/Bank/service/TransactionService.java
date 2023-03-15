@@ -17,11 +17,9 @@ public interface TransactionService {
 
     List<Transaction> getTransactionByType(String type) throws InvalidTransactionTypeException;
 
-    Transaction deposit(DepositRequest depositRequest) throws MissingPropertyException, PositiveAmountException;
+    Transaction deposit(DepositRequest depositRequest) throws PositiveAmountException, DuplicateAccountException, InvalidUsernameException, InvalidAccountNumException;
 
-    List<Transaction> getTransactionsByaccountNum(String accountNum) throws InvalidAccountIdException;
+    Transaction withdraw(WithdrawRequest withdrawRequest) throws PositiveAmountException, InsufficientFundsException, DuplicateAccountException, InvalidAccountNumException, InvalidUsernameException;
 
-    Transaction withdraw(WithdrawRequest withdrawRequest) throws MissingPropertyException, PositiveAmountException, InsufficientFundsException;
-
-    Stack<Transaction> transfer(TransferRequest transferRequest) throws PositiveAmountException, MissingPropertyException, InsufficientFundsException, DuplicateAccountException, InvalidUserIdException;
+    Stack<Transaction> transfer(TransferRequest transferRequest) throws PositiveAmountException, MissingPropertyException, InsufficientFundsException, DuplicateAccountException, InvalidUserIdException, InvalidUsernameException, InvalidAccountNumException;
 }

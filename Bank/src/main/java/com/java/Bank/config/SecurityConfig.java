@@ -62,11 +62,13 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users").hasRole("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/{id}").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/email/{email}").hasRole("USER");
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/usernames/{username}").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/users/updateUser").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/users/deleteUser/{id}").hasAnyRole("USER","ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/accounts/AddAccount/{userId}").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/user/{username}").hasRole("USER");
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/{type}").hasRole("USER");
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/type/{type}").hasRole("USER");
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/{id}").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/accounts/deleteAccount/{id}").hasAnyRole("USER","ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/transactions/deposit").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/transactions/withdraw").hasRole("USER");

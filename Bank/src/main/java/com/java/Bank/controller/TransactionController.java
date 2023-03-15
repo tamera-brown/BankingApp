@@ -41,19 +41,11 @@ public class TransactionController {
         }
     }
 
-    @GetMapping("/account/{accountNum}")
-    public ResponseEntity getTransactionsByaccountNum(@PathVariable String accountNum){
-        try{
-            return ResponseEntity.ok(service.getTransactionsByaccountNum(accountNum));
-        }catch (InvalidAccountIdException e){
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
-        }
-    }
     @PostMapping("/deposit")
-    public ResponseEntity deposit(@RequestBody @Valid DepositRequest depositRequest) {
+    public ResponseEntity deposit(@RequestBody @Valid DepositRequest depositRequest ) {
         try {
             return ResponseEntity.ok(service.deposit(depositRequest));
-        } catch (MissingPropertyException | PositiveAmountException e) {
+        } catch (PositiveAmountException | DuplicateAccountException | InvalidAccountNumException | InvalidUsernameException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -61,19 +53,19 @@ public class TransactionController {
     public ResponseEntity withdraw(@RequestBody @Valid WithdrawRequest withdrawRequest) {
         try {
             return ResponseEntity.ok(service.withdraw(withdrawRequest));
-        } catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException e) {
+        } catch (PositiveAmountException | InsufficientFundsException | DuplicateAccountException | InvalidAccountNumException | InvalidUsernameException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
 
     @PostMapping("/transfer")
-        public ResponseEntity transfer(@RequestBody @Valid TransferRequest transferRequest) throws PositiveAmountException, InsufficientFundsException, MissingPropertyException,DuplicateAccountException {
+        public ResponseEntity transfer(@RequestBody @Valid TransferRequest transferRequest) {
             try{
                 return ResponseEntity.ok(service.transfer(transferRequest));
-            }catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException | DuplicateAccountException | InvalidUserIdException e){
+            }catch (MissingPropertyException | PositiveAmountException | InsufficientFundsException | DuplicateAccountException | InvalidUserIdException | InvalidAccountNumException | InvalidUsernameException e) {
                 return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
             }
 
-        }
+    }
 }

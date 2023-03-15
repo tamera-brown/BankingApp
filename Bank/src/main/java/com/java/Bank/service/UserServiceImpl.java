@@ -1,5 +1,6 @@
 package com.java.Bank.service;
 
+import com.java.Bank.AccountStatus;
 import com.java.Bank.Authority;
 import com.java.Bank.TransactionType;
 import com.java.Bank.exceptions.*;
@@ -49,10 +50,12 @@ public class UserServiceImpl implements UserService {
             Stack<Transaction> allTransactions=new Stack<>();
             newAccount.setAccountType(newUser.getAccount().get(0).getAccountType());
             newAccount.setBalance(newUser.getAccount().get(0).getBalance());
+            newAccount.setAccountStatus(AccountStatus.ACTIVE);
             allAccounts.add(newAccount);
             newUser.setAccount(allAccounts);
             newTransaction.setTransactionType(TransactionType.DEPOSIT);
-            newTransaction.setDescription("initial deposit of $" + String.format("%.2f",newUser.getAccount().get(0).getBalance()));
+            newTransaction.setTransactionAmount(newUser.getAccount().get(0).getBalance());
+            newTransaction.setDescription("initial deposit of $" + String.format("%.2f",newTransaction.getTransactionAmount()));
             allTransactions.push(newTransaction);
             newAccount.setTransaction(allTransactions);
             newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
