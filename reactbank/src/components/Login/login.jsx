@@ -6,7 +6,7 @@ import { getCurrentUser, login } from "../service/userService";
 import { useSnackbar } from "notistack";
 import {  useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@mui/material";
+import { Button} from "@mui/material";
 
 const Login=()=>{
     const dispatch = useDispatch()
@@ -30,7 +30,7 @@ const Login=()=>{
 
       return (
           <>
-            <h1>Login</h1>
+            <h1 className='title'>Login</h1>
             <Formik
               initialValues={{
                 username: "",
@@ -96,7 +96,7 @@ const Login=()=>{
           }, 500);
         }}
             >
-              <Form>
+              <Form id="form">
               <MyTextInput
                label="Username"
                name="username"
@@ -110,12 +110,14 @@ const Login=()=>{
                placeholder="Password"
              />
               
-                <Button type="submit">Submit</Button>
-                <div>
-                  Or <Link to={"/register"}>register now!</Link>
-                  </div>
+                <Button type="submit" variant="outlined"><strong>Login</strong></Button>
               </Form>
             </Formik>
+            <Link to={"/register"}>
+              <p>
+                Don't have an account? Click here to create!
+              </p>
+            </Link>
           </>
         );
   }

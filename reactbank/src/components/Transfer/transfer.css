@@ -1,5 +1,7 @@
-input[type="balance"],
-select,
+input[type="giveAccNum"],
+input[type="transferAmount"],
+input[type="receiveUsername"],
+input[type="receiveAccNum"]
 textarea{
   width: 400px;
   border-radius: 10px;
@@ -9,7 +11,7 @@ textarea{
 label {
   margin-top: 1rem;
   font-weight: bold;
-  /* display: flex; */
+  display: flex;
 }
 button[type="submit"] {
   margin-top: 1rem;

@@ -4,15 +4,16 @@ input[type="firstName"],
 input[type="lastName"],
 input[type="address"],
 input[type="email"],
-input[type="phoneNum:"]
-input[type="accountType"]
+input[type="phoneNum"],
+input[type="account[0].balance"],
+select,
 textarea{
   width: 400px;
   border-radius: 10px;
   padding: 0.65rem 0.5rem;
   font-size: 1rem;
 }
-label {
+label,.select-form,.form-label {
   margin-top: 1rem;
   font-weight: bold;
   display: flex;
@@ -22,7 +23,12 @@ button[type="submit"] {
   padding: 0.5rem 1.25rem;
   font-size: 1rem;
   border-radius: 10px;
+  text-decoration: none;
+  /* background-color: white; */
+  border: 2px solid white;
+  text-decoration: none;
 }
+
 .error{
   color: red;
 }

@@ -7,12 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import styled from "@emotion/styled";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
 
 const NewAccount=()=>{
     const currentUserData=state=>state.currentUser
     const currentUser=useSelector(currentUserData)
     const {enqueueSnackbar}=useSnackbar()
     const navigate = useNavigate();
+
+   
     const MyTextInput = ({ label, ...props }) => {
       // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
       // which we can spread on <input>. We can use field meta to show an error
@@ -28,47 +32,46 @@ const NewAccount=()=>{
         </>
       );
     };
-      // Styled components ....
-const StyledSelect = styled.select`
-color: var(--blue);
-`;
-
-const StyledErrorMessage = styled.div`
-font-size: 12px;
-color: var(--red-600);
-width: 400px;
-margin-top: 0.25rem;
-&:before {
-  content: "❌ ";
-  font-size: 10px;
-}
-@media (prefers-color-scheme: dark) {
-  color: var(--red-300);
-}
-`;
-
-const StyledLabel = styled.label`
-margin-top: 1rem;
-`;
-
-const MySelect = ({ label, ...props }) => {
-// useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-// which we can spread on <input> and alse replace ErrorMessage entirely.
-const [field, meta] = useField(props);
-return (
-  <>
-    <StyledLabel htmlFor={props.id || props.name}>{label}</StyledLabel>
-    <StyledSelect {...field} {...props} />
-    {meta.touched && meta.error ? (
-      <StyledErrorMessage>{meta.error}</StyledErrorMessage>
-    ) : null}
-  </>
-);
-};
-
+ // Styled components ....
+ const StyledSelect = styled.select`
+ 
+ `;
+ 
+ const StyledErrorMessage = styled.div`
+ font-size: 12px;
+ color: var(--red-600);
+ width: 400px;
+ margin-top: 0.25rem;
+ &:before {
+   content: "❌ ";
+   font-size: 10px;
+ }
+ @media (prefers-color-scheme: dark) {
+   color: var(--red-300);
+ }
+ `;
+ 
+ const StyledLabel = styled.label`
+ margin-top: 1rem;
+ `;
+ 
+ const MySelect = ({ label, ...props }) => {
+ // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
+ // which we can spread on <input> and alse replace ErrorMessage entirely.
+ const [field, meta] = useField(props);
+ return (
+   <>
+     <StyledLabel htmlFor={props.id || props.name}>{label}</StyledLabel>
+     <StyledSelect {...field} {...props} />
+     {meta.touched && meta.error ? (
+       <StyledErrorMessage>{meta.error}</StyledErrorMessage>
+     ) : null}
+   </>
+ );
+ };
       return (
           <>
-            <h1>New Account</h1>
+            <h1 className='title'>New Account</h1>
             <Formik
               initialValues={{
                     accountType:"",
@@ -99,7 +102,7 @@ return (
                                 vertical:'bottom',horizontal:'center',
                             },
                         });
-                            navigate('/login');
+                            navigate('/dashboard');
 
                     }).catch((error)=>{
                         enqueueSnackbar('Account creation failed',{
@@ -124,12 +127,15 @@ return (
           <MyTextInput
                label="Initial Deposit"
                name="balance"
-               type="account[0].balance"
-               placeholder="0.00"
+               type="balance"
+               placeholder="$0.00"
              />
                 <Button type="submit">Submit</Button>
               </Form>
             </Formik>
+            <Button className="homeButton" variant="outlined" onClick={()=>navigate('../dashboard')}><FontAwesomeIcon icon={faHouse} size="2xl"/></Button>
+
+
           </>
         );
   }

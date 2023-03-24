@@ -1,10 +1,14 @@
 import { Formik, Form, useField} from "formik";
 import * as Yup from "yup";
-import { withdraw } from "../service/userService";
+import { withdraw,getAccountsByUser } from "../service/userService";
 import { useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useNavigate } from 'react-router-dom';
+import { useState,useEffect } from "react";
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styled from "@emotion/styled";
 import "./withdraw.css"
 
 const Withdraw=()=>{
@@ -12,6 +16,9 @@ const Withdraw=()=>{
     const currentUser=useSelector(currentUserData)
     const navigate = useNavigate();
     const {enqueueSnackbar}=useSnackbar()
+    const [accounts, setAccounts] = useState([]);
+
+  
 
     const MyTextInput = ({ label, ...props }) => {
         // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
@@ -28,10 +35,37 @@ const Withdraw=()=>{
           </>
         );
       };
-  
+      // Styled components ....
+ const StyledSelect = styled.select`
+
+ `;
+ 
+ 
+       const MySelect = ({ label, ...props }) => {
+         // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
+         // which we can spread on <input> and alse replace ErrorMessage entirely.
+         const [field, meta] = useField(props);
+         return (
+           <>
+             <label htmlFor={props.id || props.name}>{label}</label>
+             <StyledSelect {...field} {...props} />
+             {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+             ) : null}
+           </>
+         );
+       };
+      useEffect(()=>{
+        getAccountsByUser(currentUser.username).then((account)=>{
+            setAccounts(account)
+           
+                
+            })
+        },[])
+
     return(
         <>
-            <h1>Withdraw</h1>
+            <h1 className='title'>Withdraw</h1>
             <Formik
               initialValues={{
                 username:currentUser.username,
@@ -78,22 +112,25 @@ const Withdraw=()=>{
         }}
             >
               <Form>
-              <MyTextInput
-               label="Account Number"
-               name="accountNum"
-               type="accountNum"
-               placeholder="Account #"
-             />
+              <MySelect label="Account Number" name="accountNum" >
+            <option value="">Select account number</option>
+            {accounts.map((option,index) => (
+               option.accountStatus==='CLOSED' ? <option disabled key ={index} value={option.accountNum}>{option.accountNum}n</option>: <option key ={index} value={option.accountNum}>{option.accountNum}</option>  
+            ))}
+          
+          </MySelect>
               <MyTextInput
                label="Withdraw Amount"
                name="withdrawAmount"
                type="withdrawAmount"
-               placeholder="Amount"
+               placeholder="$0.00"
              />
            
               <Button type="submit">Submit</Button>
               </Form>
             </Formik>   
+            <Button className="homeButton"  variant="outlined" onClick={()=>navigate('../dashboard')}><FontAwesomeIcon icon={faHouse} size="2xl"/></Button>
+
         </>
     )
 }

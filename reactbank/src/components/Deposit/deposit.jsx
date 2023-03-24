@@ -5,6 +5,11 @@ import { useSelector } from "react-redux";
 import { Button } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useNavigate } from 'react-router-dom';
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getAccountsByUser} from '../service/userService';
+import { useState,useEffect} from 'react';
+import styled from "@emotion/styled";
 import "./deposit.css"
 
 
@@ -12,9 +17,13 @@ const Deposit=()=>{
     
     const currentUserData=state=>state.currentUser
     const currentUser=useSelector(currentUserData)
+    const [accounts, setAccounts] = useState([]);
+  
     const navigate = useNavigate();
     const {enqueueSnackbar}=useSnackbar()
     
+
+  
     const MyTextInput = ({ label, ...props }) => {
       // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
       // which we can spread on <input>. We can use field meta to show an error
@@ -30,10 +39,38 @@ const Deposit=()=>{
         </>
       );
     };
+ // Styled components ....
+ const StyledSelect = styled.select`
 
+ `;
+ 
+ 
+       const MySelect = ({ label, ...props }) => {
+         // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
+         // which we can spread on <input> and alse replace ErrorMessage entirely.
+         const [field, meta] = useField(props);
+         return (
+           <>
+             <label htmlFor={props.id || props.name}>{label}</label>
+             <StyledSelect {...field} {...props} />
+             {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+             ) : null}
+           </>
+         );
+       };
+  
+    useEffect(()=>{
+      getAccountsByUser(currentUser.username).then((account)=>{
+          setAccounts(account)
+         
+              
+          })
+      },[])
+     
     return(
         <>
-            <h1>Deposit</h1>
+            <h1 className='title'>Deposit</h1>
             <Formik
               initialValues={{
                 username:currentUser.username,
@@ -80,22 +117,28 @@ const Deposit=()=>{
         }}
             >
               <Form>
-              <MyTextInput
-               label="Account Number"
-               name="accountNum"
-               type="accountNum"
-               placeholder="Account #"
-             />
+         <MySelect label="Account Number" name="accountNum" >
+            <option value="">Select account number</option>
+            {accounts.map((option,index) => (
+              option.accountStatus==='CLOSED' ? <option disabled key ={index} value={option.accountNum}>{option.accountNum}n</option>: <option key ={index} value={option.accountNum}>{option.accountNum}</option>  
+            ))}
+          
+          </MySelect>
+          
               <MyTextInput
                label="Deposit Amount"
                name="depositAmount"
                type="depositAmount"
-               placeholder="Amount"
+               placeholder="$0.00"
              />
-           
-              <Button type="submit">Submit</Button>
+            {/* <CurrencyFormat value={"45555556"} type="text" prefix={'$'} thousandSeparator={true} name={"depositAmount"} onChange={(e) => setAmount(e.target.value)} required/> */}
+              <Button variant="outlined" type="submit">Submit</Button>
               </Form>
+
             </Formik>
+            <Button className="homeButton" variant="outlined" onClick={()=>navigate('../dashboard')}><FontAwesomeIcon icon={faHouse} size="2xl"/></Button>
+
+
         </>
     )
 }

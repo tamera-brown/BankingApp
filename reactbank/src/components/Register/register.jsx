@@ -3,13 +3,22 @@ import { Formik, Form, useField} from "formik";
 import * as Yup from "yup";
 import { register } from "../service/userService";
 import { useSnackbar } from "notistack";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@mui/material";
+import { PatternFormat} from 'react-number-format';
 import styled from "@emotion/styled";
+import PasswordChecklist from "react-password-checklist"
+import { useState } from "react";
+import CurrencyFormat from 'react-currency-format';
+
 
 const Register=()=>{
     const {enqueueSnackbar}=useSnackbar()
     const navigate = useNavigate();
+  //  const [initBalance,setBalance]=useState('')
+   
+
+  
     const MyTextInput = ({ label, ...props }) => {
       // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
       // which we can spread on <input>. We can use field meta to show an error
@@ -41,45 +50,27 @@ const Register=()=>{
       };
       // Styled components ....
 const StyledSelect = styled.select`
-color: var(--blue);
+
 `;
 
-const StyledErrorMessage = styled.div`
-font-size: 12px;
-color: var(--red-600);
-width: 400px;
-margin-top: 0.25rem;
-&:before {
-  content: "❌ ";
-  font-size: 10px;
-}
-@media (prefers-color-scheme: dark) {
-  color: var(--red-300);
-}
-`;
-
-const StyledLabel = styled.label`
-margin-top: 1rem;
-`;
-
-const MySelect = ({ label, ...props }) => {
-// useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
-// which we can spread on <input> and alse replace ErrorMessage entirely.
-const [field, meta] = useField(props);
-return (
-  <>
-    <StyledLabel htmlFor={props.id || props.name}>{label}</StyledLabel>
-    <StyledSelect {...field} {...props} />
-    {meta.touched && meta.error ? (
-      <StyledErrorMessage>{meta.error}</StyledErrorMessage>
-    ) : null}
-  </>
-);
-};
+      const MySelect = ({ label, ...props }) => {
+        // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
+        // which we can spread on <input> and alse replace ErrorMessage entirely.
+        const [field, meta] = useField(props);
+        return (
+          <>
+            <label htmlFor={props.id || props.name}>{label}</label>
+            <StyledSelect {...field} {...props} />
+            {meta.touched && meta.error ? (
+              <div className="error">{meta.error}</div>
+            ) : null}
+          </>
+        );
+      };
 
       return (
           <>
-            <h1>Register</h1>
+            <h1 className='title'>Register</h1>
             <Formik
               initialValues={{
                 firstName:"",
@@ -87,11 +78,12 @@ return (
                 address:"",
                 username:"",
                 password:"",
+                confirmPassword: '',
                 email:"",
                 phoneNum:"",
                 account:[{
                     accountType:"",
-                    balance:""
+                    balance:80.00
                 }],
                 acceptedTerms:""
               }}
@@ -106,9 +98,10 @@ return (
                   username: Yup.string()
                     .required('Username is required'),
                   password: Yup.string()
-                    .min(8, 'Password must be at least 8 characters')
-                    .max(15, 'Password has max length of 15 characters')
                     .required('Password is required'),
+                  confirmPassword: Yup.string()
+                    .required('Confirm Password is required')
+                    .oneOf([Yup.ref('password'), null], 'Passwords do not match'),
                   email:Yup.string()
                   .email('Email is invalid')
                   .required('Email is required'),
@@ -137,7 +130,7 @@ return (
                             balance:values.balance
                         }]
                     };
-                    
+    
                     register(dataToSubmit)
                     .then((response)=>{
                         enqueueSnackbar('Register was successful',{
@@ -161,6 +154,8 @@ return (
           }, 500);
         }}
             >
+        
+              {({ values, handleChange, isSubmitting }) => (
               <Form>
               <MyTextInput
                label="First Name"
@@ -178,7 +173,7 @@ return (
                label="Address"
                name="address"
                type="address"
-               placeholder="ex. 101 Water Street Lanham, MD 20706"
+               placeholder="ex. 101 Water Street Sunnyville, CA  43287"
              />
               <MyTextInput
                label="Username"
@@ -186,46 +181,70 @@ return (
                type="username"
                placeholder="Username"
              />
-             <MyTextInput
-               label="Password"
+             
+             <MyTextInput 
+               label="Password" 
                name="password"
                type="password"
                placeholder="Password"
              />
+              <PasswordChecklist
+				rules={["minLength","maxLength","specialChar","number","capital","lowercase"]}
+				minLength={8}
+        maxLength={15}
+				value={values.password}
+        onChange={(isValid) => {}}
+			/>
+             <MyTextInput 
+               label="Confirm Password" 
+               name="confirmPassword"
+               type="password"
+               placeholder="Confirm Password"
+             />
+          
               <MyTextInput
                label="Email"
                name="email"
                type="email"
                placeholder="Email"
              />
-               <MyTextInput
-               label="Phone Number"
-               name="phoneNum"
-               type="phoneNum"
-               placeholder="(XXX) XXX-XXX"
-             />
-             
-
-              <MySelect label="Account Type" name="accountType" type="account[0].accountType">
+             <h4 className="form-label">Phone Number</h4>
+             <PatternFormat 
+             value={values.phoneNum} 
+             format={"(###)###-####"} 
+             allowEmptyFormatting mask={"_"}  
+             type={"phoneNum"} 
+             name={"phoneNum"} 
+             onChange={handleChange} 
+             required/>
+            
+             <MySelect label="Account Type" name="accountType">
             <option value="">Select a account type</option>
-            <option value="CHECKING">CHECKING</option>
-            <option value="SAVINGS">SAVINGS</option>
+            <option  value={"CHECKING"}>CHECKING</option>
+            <option value={"SAVINGS"}>SAVINGS</option>
           </MySelect>
 
-          <MyTextInput
+         <MyTextInput
                label="Initial Deposit"
                name="balance"
                type="account[0].balance"
                placeholder="0.00"
              />
-
            <MyCheckbox name="acceptedTerms">
             I accept the terms and conditions
           </MyCheckbox>
-                <Button type="submit">Submit</Button>
+                <Button type="submit" variant="outlined"><strong>Register</strong></Button>
               </Form>
+                   )}
             </Formik>
+            <Link to={'/login'}>
+              <p>
+                Already have an Accout? Click here to Log-In
+              </p>
+            </Link>
           </>
-        );
-  }
+      );
+}
+      
+
   export default Register;
