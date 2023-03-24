@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
             allTransactions.push(newTransaction);
             newAccount.setTransaction(allTransactions);
             newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-            newUser.setAuthorities(List.of(Authority.ROLE_USER));
+            newUser.setAuthorities(List.of(Authority.USER));
             transactionRepo.insert(allTransactions);
             accountRepo.insert(allAccounts);
             userRepo.insert(newUser);

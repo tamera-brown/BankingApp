@@ -62,13 +62,12 @@ public class AccountController {
             return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
-    @DeleteMapping("/closeAccount/{id}")
+    @PatchMapping("/closeAccount/{id}")
     public ResponseEntity closeAccountById(@PathVariable String id){
         try {
-            service.closeAccountById(id);
-            return new ResponseEntity("Account successfully closed", HttpStatus.NO_CONTENT);
-        }catch(InvalidAccountIdException ex){
-            return new ResponseEntity("Account not found", HttpStatus.NOT_FOUND);
+           return ResponseEntity.ok(service.closeAccountById(id));
+        }catch(InvalidAccountIdException e){
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
 }

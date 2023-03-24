@@ -21,7 +21,6 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
    public UserRepo userRepo;
 
-    public static final String ROLE_USER = "ROLE_USER";
 
 
     @Override
@@ -32,7 +31,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         }
         Collection<SimpleGrantedAuthority> authorities=new ArrayList<>();
         user.getAuthorities().forEach(authority -> {
-            authorities.add(new SimpleGrantedAuthority(ROLE_USER));
+            authorities.add(new SimpleGrantedAuthority(authority.name()));
         });
         return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),authorities);
 

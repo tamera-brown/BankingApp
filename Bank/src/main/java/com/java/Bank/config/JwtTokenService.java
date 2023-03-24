@@ -28,7 +28,7 @@ public class JwtTokenService {
     public String generateToken(final UserDetails userDetails) {
          return JWT.create()
                 .withSubject(userDetails.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                 .withClaim("roles",userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(hmac512);
 

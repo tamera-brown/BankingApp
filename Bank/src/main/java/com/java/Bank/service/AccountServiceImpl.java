@@ -59,12 +59,15 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> account = accountRepo.findById(id);
         if (account.isPresent()) {
             retrieved = account.get();
-            return retrieved;
+            if (retrieved.getAccountStatus().equals(AccountStatus.ACTIVE)) {
+                return retrieved;
+            } else {
+                throw new InvalidAccountIdException("Account is closed");
+            }
         } else {
             throw new InvalidAccountIdException("Account with that id does not exist");
         }
     }
-
     @Override
     public List<Account> getAccountsByAccountStatus(String status) throws InvalidAccountStatusException{
         AccountStatus accountStatus = AccountStatus.valueOf(status.toUpperCase());
@@ -108,8 +111,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void closeAccountById(String id) throws InvalidAccountIdException {
+    public Account closeAccountById(String id) throws InvalidAccountIdException {
         Account userAccount=getAccountById(id);
         userAccount.setAccountStatus(AccountStatus.CLOSED);
+        accountRepo.save(userAccount);
+        return userAccount;
     }
 }

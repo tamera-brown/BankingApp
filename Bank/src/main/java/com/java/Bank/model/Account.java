@@ -29,7 +29,7 @@ public class Account {
 
     }
 
-    public Account(AccountType accountType, double balance, LocalDateTime accountopened,Stack<Transaction> transaction,AccountStatus accountStatus) {
+    public Account(AccountType accountType, Double balance, LocalDateTime accountopened,Stack<Transaction> transaction,AccountStatus accountStatus) {
         this.accountType = accountType;
         this.balance = balance;
         this.accountopened = accountopened;

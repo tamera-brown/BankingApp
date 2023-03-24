@@ -68,8 +68,9 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/accounts/AddAccount/{userId}").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/user/{username}").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/type/{type}").hasRole("USER");
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/status/{status}").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/accounts/{id}").hasRole("USER");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/api/accounts/deleteAccount/{id}").hasAnyRole("USER","ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PATCH,"/api/accounts/closeAccount/{id}").hasAnyRole("USER_ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/transactions/deposit").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/transactions/withdraw").hasRole("USER");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/transactions/transfer").hasRole("USER");
